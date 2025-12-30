@@ -75,6 +75,6 @@ The project follows a standard Vite-based React workflow:
 - Global Web3 state in `/src/context/Web3Context.tsx`
 - Contract ABI and addresses in `metadata.json`
 
-## Recent Updates
 
-Refer to [PROJECT_UPDATES.md](./PROJECT_UPDATES.md) for a detailed log of all recent file modifications, network migrations, and architectural improvements.
+
+**Submitted for CodeNut Global Vibe AI Web3 Hackathon 2025**
