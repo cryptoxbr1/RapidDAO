@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useWeb3 } from '@/context/Web3Context';
 import { useToast } from '@/hooks/use-toast';
+import { analyzeProposalWithAI } from '@/utils/aiAnalysis';
 
 interface ProposalCardProps {
   id: number;
@@ -21,6 +22,8 @@ export const ProposalCard = ({ id, title, description, yesVotes, noVotes, isOpen
   const { toast } = useToast();
   const [voted, setVoted] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
+  const [analysis, setAnalysis] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
     const checkVoted = async () => {
@@ -31,6 +34,22 @@ export const ProposalCard = ({ id, title, description, yesVotes, noVotes, isOpen
     };
     checkVoted();
   }, [id, account, hasVoted]);
+
+  const handleAIAnalysis = async () => {
+    setIsAnalyzing(true);
+    try {
+      const result = await analyzeProposalWithAI(title, description);
+      setAnalysis(result);
+    } catch (error) {
+      toast({
+        title: "Analysis Failed",
+        description: "Analysis service is currently unavailable. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   const handleVote = async (voteYes: boolean) => {
     if (!account) {
@@ -82,6 +101,29 @@ export const ProposalCard = ({ id, title, description, yesVotes, noVotes, isOpen
           </div>
         </div>
         <CardDescription className="line-clamp-2 mt-2">{description}</CardDescription>
+        
+        {analysis ? (
+          <div className="mt-4 p-3 bg-blue-50 rounded-md border border-blue-100 animate-in fade-in slide-in-from-top-1">
+            <div className="flex items-center gap-2 mb-1 text-blue-700 font-semibold text-xs uppercase tracking-wider">
+              <Sparkles className="h-3 w-3" />
+              AI Impact Analysis
+            </div>
+            <p className="text-sm text-slate-700 leading-relaxed italic font-medium">
+              "{analysis}"
+            </p>
+          </div>
+        ) : (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="mt-3 text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-0 h-auto font-medium flex items-center gap-1.5 transition-all"
+            onClick={handleAIAnalysis}
+            disabled={isAnalyzing}
+          >
+            <Sparkles className={`h-3.5 w-3.5 ${isAnalyzing ? 'animate-spin' : ''}`} />
+            {isAnalyzing ? "Analyzing Proposal..." : "Analyze Impact with AI"}
+          </Button>
+        )}
       </CardHeader>
       
       <CardContent className="space-y-4">
