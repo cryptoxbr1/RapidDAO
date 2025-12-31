@@ -1,28 +1,23 @@
-import react from '@vitejs/plugin-react';
 import path from 'path';
-import { defineConfig } from 'vite';
-import componentTagger from './plugins/component-tagger';
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
 
-export default defineConfig({
-  plugins: [react(), componentTagger()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-  server: {
-    allowedHosts: true,
-    hmr: {
-      overlay: false,
-      timeout: 15000,
-    },
-    watch: {
-      // Use polling instead of native file system events (more reliable for some environments)
-      usePolling: true,
-      // Wait 500ms before triggering a rebuild (gives time for all files to be flushed)
-      interval: 500,
-      // Additional delay between file change detection and reload
-      binaryInterval: 500,
-    },
-  },
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, '.', '');
+    return {
+      server: {
+        port: 3000,
+        host: '0.0.0.0',
+      },
+      plugins: [react()],
+      define: {
+        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+      },
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, '.'),
+        }
+      }
+    };
 });

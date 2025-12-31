@@ -6,6 +6,7 @@ import { Web3Provider } from '@/context/Web3Context';
 import { Navbar } from '@/components/Navbar';
 import { Home } from '@/pages/Home';
 import { CreateProposal } from '@/pages/CreateProposal';
+import { ProposalDetails } from '@/pages/ProposalDetails';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<CreateProposal />} />
+            <Route path="/proposal/:id" element={<ProposalDetails />} />
           </Routes>
         </BrowserRouter>
       </Web3Provider>

@@ -31,7 +31,7 @@ export default function componentTagger(): Plugin {
         });
 
         const ms = new MagicString(code);
-        const fileRelative = path.relative(process.cwd(), id);
+        const fileRelative = path.relative((process as any).cwd(), id);
 
         walk(ast as any, {
           enter(node: any) {

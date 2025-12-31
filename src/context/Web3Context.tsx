@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { BrowserProvider, Contract, formatEther } from 'ethers';
 import { contractAddress, contractABI, chainId, rpcUrl } from '@/utils/evmConfig';
 
-interface Proposal {
+export interface Proposal {
   id: number;
   title: string;
   description: string;
